@@ -10,12 +10,27 @@ class Database:
 
   def __init__(self):
     self.jsonpath: str = 'soccer_small.json'
-    self.data: dict = self.load_data()
+    self.data: dict = self._load_data()
   
-  def load_data(self) -> dict:
+  def _load_data(self) -> dict:
     '''
     Loads the data from the JSON file.
     '''
-    with open(self.jsonpath, 'r') as f:
+    with open(file=self.jsonpath, mode='r', encoding='utf-8') as f:
       data: dict = json.load(f)
     return data
+  
+  def get_player(self, name: str) -> dict | None:
+    '''
+    Returns the player with the given name.
+    '''
+    for player in self.data:
+      if player['name'] == name:
+        return player 
+    return None
+  
+  def get_player_names(self) -> list[str]:
+    '''
+    Returns a list of the names of all players.
+    '''
+    return [player['Name'] for player in self.data]
