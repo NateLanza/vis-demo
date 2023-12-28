@@ -6,4 +6,6 @@ app = Flask(__name__)
 
 @app.route('/api')
 def index():
-    return 'Hello World!'
+    response = dict()
+    response['message'] = 'Hello World!'
+    return response
