@@ -1,4 +1,5 @@
 import json
+import string
 
 class Database:
   '''
@@ -23,14 +24,38 @@ class Database:
   def get_player(self, name: str) -> dict | None:
     '''
     Returns the player with the given name.
+    Case-insensitive.
     '''
+    name = name.lower()
     for player in self.data:
-      if player['name'] == name:
+      if player['Name'].lower() == name:
         return player 
     return None
   
-  def get_player_names(self) -> list[str]:
+  def get_players(self) -> list[dict]:
     '''
-    Returns a list of the names of all players.
+    Returns a list of all players as dictionaries.
     '''
-    return [player['Name'] for player in self.data]
+    return [player for player in self.data]
+  
+  def get_country_players(self, country: str) -> list[dict]:
+    '''
+    Returns a list of all players from the given country.
+    Case-insensitive.
+    '''
+    country = country.lower()
+    return [player for player in self.data if player['Nationality'].lower() == country]
+  
+  def get_club_players(self, club: str) -> list[dict]:
+    '''
+    Returns a list of all players from the given club.
+    Case-insensitive.
+    '''
+    club = club.lower()
+    return [player for player in self.data if player['Club'].lower() == club]
+  
+  def get_attributes(self) -> list[str]:
+    '''
+    Returns a list of all attributes.
+    '''
+    return self.data[0].keys()
