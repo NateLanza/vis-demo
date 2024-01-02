@@ -93,13 +93,16 @@ function App() {
     if (att === sortBy) {
       setSortDir(!sortDir);
     } else {
-      setSortDir(true);
+      setSortDir(true); // Default ascending
       setSortBy(att);
     }
   }
   // Sort the data
   if (playerData.loaded) {
     playerData.data.sort((a: any, b: any) => {
+      // This simple comparison sorts alphabetically,
+      // which ends up being odd for number fields,
+      // as ascending alphabetical sort is descending numerical sort
       if (a[sortBy] < b[sortBy]) {
         return sortDir ? -1 : 1;
       } else if (a[sortBy] > b[sortBy]) {

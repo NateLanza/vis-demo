@@ -1,0 +1,158 @@
+/**
+ * All code in this file shamelessly copied from
+ * https://www.react-graph-gallery.com/density-plot
+ * I do not claim ownership nor authorship.
+ * All credit goes to Yan Holtz.
+ * Some modifications by me so that it works
+ * in strict typescript and works for my data.
+ * Changes include:
+ *  - Adding type annotations
+ *  - Scaling the x axis to the data
+ * @author Yan Holtz
+ * @see https://www.react-graph-gallery.com/density-plot
+ */
+
+import { useMemo } from "react";
+import * as d3 from "d3";
+import { ScaleLinear } from "d3";
+
+const MARGIN = { top: 30, right: 30, bottom: 50, left: 50 };
+const TICK_LENGTH = 6;
+
+// Function to compute density
+function kernelDensityEstimator(kernel: (x: number) => number, X: number[]): 
+    (V: number[]) => [number, number][] 
+{
+  return function (V: number[]): [number, number][] {
+    return X.map(function (x): [number, number] {
+      return [
+        x,
+        d3.mean(V, function (v: number) {
+          return kernel(x - v);
+        }) || 0, // Add a default value of 0 for undefined values
+      ];
+    });
+  };
+}
+
+function kernelEpanechnikov(k: number) {
+  return function (v: number) {
+    return Math.abs((v /= k)) <= 1 ? (0.75 * (1 - v * v)) / k : 0;
+  };
+}
+
+type DensityChartProps = {
+  width: number;
+  height: number;
+  data: number[];
+};
+
+/**
+ * 
+ * @param width Width of the chart in px
+ * @param height Height of the chart in px
+ * @param data Data to display as an array of numbers
+ * @returns 
+ */
+export const DensityChart = ({ width, height, data }: DensityChartProps) => {
+  const boundsWidth = width - MARGIN.right - MARGIN.left;
+  const boundsHeight = height - MARGIN.top - MARGIN.bottom;
+
+  const xScale = useMemo(() => {
+    return d3
+      .scaleLinear()
+      .domain([0, 1000])
+      .range([10, boundsWidth - 10]);
+  }, [data, width]);
+
+  // Compute kernel density estimation
+  const density = useMemo(() => {
+    const kde = kernelDensityEstimator(kernelEpanechnikov(7), xScale.ticks(40));
+    return kde(data);
+  }, [xScale]);
+
+  const yScale = useMemo(() => {
+    const max = Math.max(...density.map((d) => d[1]));
+    return d3.scaleLinear().range([boundsHeight, 0]).domain([0, max]);
+  }, [data, height]);
+
+  const path = useMemo(() => {
+    const lineGenerator = d3
+      .line()
+      .x((d) => xScale(d[0]))
+      .y((d) => yScale(d[1]))
+      .curve(d3.curveBasis);
+    return lineGenerator(density);
+  }, [density]);
+
+  return (
+    <svg width={width} height={height}>
+      <g
+        width={boundsWidth}
+        height={boundsHeight}
+        transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
+      >
+        <path
+          d={path || undefined}
+          fill="#9a6fb0"
+          opacity={0.4}
+          stroke="black"
+          strokeWidth={1}
+          strokeLinejoin="round"
+        />
+
+        {/* X axis, use an additional translation to appear at the bottom */}
+        <g transform={`translate(0, ${boundsHeight})`}>
+          <AxisBottom xScale={xScale} pixelsPerTick={40} />
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+type AxisBottomProps = {
+  xScale: ScaleLinear<number, number>;
+  pixelsPerTick: number;
+};
+
+export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
+  const range = xScale.range();
+
+  const ticks = useMemo(() => {
+    const width = range[1] - range[0];
+    const numberOfTicksTarget = Math.floor(width / pixelsPerTick);
+
+    return xScale.ticks(numberOfTicksTarget).map((value) => ({
+      value,
+      xOffset: xScale(value),
+    }));
+  }, [xScale]);
+
+  return (
+    <>
+      {/* Main horizontal line */}
+      <path
+        d={["M", range[0], 0, "L", range[1], 0].join(" ")}
+        fill="none"
+        stroke="currentColor"
+      />
+
+      {/* Ticks and labels */}
+      {ticks.map(({ value, xOffset }) => (
+        <g key={value} transform={`translate(${xOffset}, 0)`}>
+          <line y2={TICK_LENGTH} stroke="currentColor" />
+          <text
+            key={value}
+            style={{
+              fontSize: "10px",
+              textAnchor: "middle",
+              transform: "translateY(20px)",
+            }}
+          >
+            {value}
+          </text>
+        </g>
+      ))}
+    </>
+  );
+};
