@@ -1,8 +1,13 @@
 import './App.css';
 import { useEffect, useState } from 'react';
+import MultiSelect from 'multiselect-react-dropdown';
+import Table from 'react-bootstrap/Table';
 
 // URL to fetch data from
 const DATA_ENDPOINT: string = "/api";
+
+// URL to fetch attributes from
+const ATTS_ENDPOINT: string = "/api/attributes";
 
 // Default attributes to display
 // Preffered_Position is a typo, just not mine- see soccer_small.json
@@ -48,15 +53,39 @@ function useFetchData(endpointURL: string): DataFetch {
 }
   
 function App() {
+  // Fetch data from backend
   const playerData: DataFetch = useFetchData(DATA_ENDPOINT);
+  const attsFetch: DataFetch = useFetchData(ATTS_ENDPOINT);
   
+  // Convert atts to proper format for MultiSelect
+  let atts: Array<{name: string, id: number}> = [];
+  if (attsFetch.loaded) {
+    let i: number = 0;
+    atts = attsFetch.data.map(
+    (att: string) => ({name: att, id: i++})
+  );
+
+  }
+
   return (
     <div className="App">
       <section>
-        {!playerData.loaded ? ( // If not loaded, <h4>, else table
+        <h1>Soccer Player Data</h1>
+        {!attsFetch.loaded ? (
+          <h4>Loading attributes...</h4>
+        ) : (
+          <MultiSelect
+            options={atts}
+            displayValue="att"
+            placeholder="Select attributes to display"
+            selectedValues={DEFAULT_ATTS}
+          />
+        )}
+        <br />
+        {!playerData.loaded ? (
           <h4>Loading player data...</h4>
         ) : (
-          <table className="data">
+          <Table className="data" striped bordered hover>
             <thead>
               <tr>
                 {DEFAULT_ATTS.map((att) => (
@@ -73,7 +102,7 @@ function App() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
         )}
       </section>
     </div>
