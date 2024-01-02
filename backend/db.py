@@ -57,4 +57,4 @@ class Database:
     '''
     Returns a list of all attributes.
     '''
-    return self.data[0].keys()
+    return list(self.data[0].keys())
