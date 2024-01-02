@@ -14,6 +14,8 @@ const ATTS_ENDPOINT: string = "/api/attributes";
 const DEFAULT_ATTS: string[] = 
   ["Name", "Nationality", "Club", "Age", "Preffered_Position"];
 
+const DEFAULT_SORTBY: string = "Name";
+
 /**
  * Result of fetching data from the backend
  * 
@@ -80,6 +82,32 @@ function App() {
     setSelected(newSelect);
   }
 
+  // Now allow sorting
+  const [sortBy, setSortBy] = useState(DEFAULT_SORTBY);
+  // Sort direction- true for ascending, false for descending
+  const [sortDir, setSortDir] = useState(true);
+  // Again using a closure to give the callback access to the state
+  const onClickSort = (att: string) => {
+    if (att === sortBy) {
+      setSortDir(!sortDir);
+    } else {
+      setSortBy(att);
+      setSortDir(true);
+    }
+  }
+  // Sort the data
+  if (playerData.loaded) {
+    playerData.data.sort((a: any, b: any) => {
+      if (a[sortBy] < b[sortBy]) {
+        return sortDir ? -1 : 1;
+      } else if (a[sortBy] > b[sortBy]) {
+        return sortDir ? 1 : -1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
   // Render
   return (
     <div className="App">
@@ -103,7 +131,7 @@ function App() {
             <thead>
               <tr>
                 {selected.map((att) => (
-                  <th>{att.label}</th>
+                    <th onClick={() => onClickSort(att.value)}>{att.label}</th>
                 ))}
               </tr>
             </thead>
