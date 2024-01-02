@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import MultiSelect from 'multiselect-react-dropdown';
 import Table from 'react-bootstrap/Table';
+import { MultiSelect, Option } from "react-multi-select-component";
 
 // URL to fetch data from
 const DATA_ENDPOINT: string = "/api";
@@ -51,6 +51,10 @@ function useFetchData(endpointURL: string): DataFetch {
 
   return { data, loaded };
 }
+
+function stringToOptions(str: string[]): Array<Option> {
+  return str.map((s: string) => ({label: s, value: s}));
+}
   
 function App() {
   // Fetch data from backend
@@ -58,15 +62,13 @@ function App() {
   const attsFetch: DataFetch = useFetchData(ATTS_ENDPOINT);
   
   // Convert atts to proper format for MultiSelect
-  let atts: Array<{name: string, id: number}> = [];
+  let atts: Array<{label: string, value: string}> = [];
   if (attsFetch.loaded) {
-    let i: number = 0;
-    atts = attsFetch.data.map(
-    (att: string) => ({name: att, id: i++})
-  );
-
+    atts = stringToOptions(attsFetch.data as string[]);
   }
+  let defaults = stringToOptions(DEFAULT_ATTS);
 
+  // Render
   return (
     <div className="App">
       <section>
@@ -75,10 +77,9 @@ function App() {
           <h4>Loading attributes...</h4>
         ) : (
           <MultiSelect
-            options={atts}
-            displayValue="att"
-            placeholder="Select attributes to display"
-            selectedValues={DEFAULT_ATTS}
+          options={atts}
+          value={defaults}
+          labelledBy='Select'
           />
         )}
         <br />
