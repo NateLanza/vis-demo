@@ -52,7 +52,12 @@ function useFetchData(endpointURL: string): DataFetch {
   return { data, loaded };
 }
 
-function stringToOptions(str: string[]): Array<Option> {
+/**
+ * Converts an array of strings to an array of options
+ * @param str - Array of strings to convert to options
+ * @returns Array of options
+ */
+function stringToOptions(str: string[]): Option[] {
   return str.map((s: string) => ({label: s, value: s}));
 }
   
@@ -60,13 +65,20 @@ function App() {
   // Fetch data from backend
   const playerData: DataFetch = useFetchData(DATA_ENDPOINT);
   const attsFetch: DataFetch = useFetchData(ATTS_ENDPOINT);
-  
+
   // Convert atts to proper format for MultiSelect
   let atts: Array<{label: string, value: string}> = [];
   if (attsFetch.loaded) {
     atts = stringToOptions(attsFetch.data as string[]);
   }
-  let defaults = stringToOptions(DEFAULT_ATTS);
+
+  // Now lets handle multiselect changes
+  const [selected, setSelected] = useState(stringToOptions(DEFAULT_ATTS));
+  // Use a closure to give the callback access to the state
+  // Probably not the cleanest way to do this, but it works for a small app
+  const handleMultiSelectChange = (newSelect: Option[]) => {
+    setSelected(newSelect);
+  }
 
   // Render
   return (
@@ -78,8 +90,9 @@ function App() {
         ) : (
           <MultiSelect
           options={atts}
-          value={defaults}
+          value={selected}
           labelledBy='Select'
+          onChange={handleMultiSelectChange}
           />
         )}
         <br />
@@ -89,16 +102,16 @@ function App() {
           <Table className="data" striped bordered hover>
             <thead>
               <tr>
-                {DEFAULT_ATTS.map((att) => (
-                  <th>{att}</th>
+                {selected.map((att) => (
+                  <th>{att.label}</th>
                 ))}
               </tr>
             </thead>
           <tbody>
             {playerData.data.map((player: any) => (
               <tr>
-                {DEFAULT_ATTS.map((att) => (
-                  <td>{player[att]}</td>
+                {selected.map((att) => (
+                  <td>{player[att.label]}</td>
                 ))}
               </tr>
             ))}
