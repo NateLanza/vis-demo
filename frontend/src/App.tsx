@@ -2,6 +2,7 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import { MultiSelect, Option } from "react-multi-select-component";
+import { DataVis } from './DataVis';
 
 // URL to fetch data from
 const DATA_ENDPOINT: string = "/api";
@@ -10,9 +11,10 @@ const DATA_ENDPOINT: string = "/api";
 const ATTS_ENDPOINT: string = "/api/attributes";
 
 // Default attributes to display
-// Preffered_Position is a typo, just not mine- see soccer_small.json
+// 'Preffered' is a typo, just not mine- see soccer_small.json
 const DEFAULT_ATTS: string[] = 
-  ["Name", "Nationality", "Club", "Age", "Preffered_Position"];
+  ["Name", "Nationality", "National_Position", "Club", "Height",
+   "Preffered_Foot", "Age", "Rating", "Weight"];
 
 const DEFAULT_SORTBY: string = "Name";
 
@@ -91,8 +93,8 @@ function App() {
     if (att === sortBy) {
       setSortDir(!sortDir);
     } else {
-      setSortBy(att);
       setSortDir(true);
+      setSortBy(att);
     }
   }
   // Sort the data
@@ -146,6 +148,13 @@ function App() {
           </tbody>
         </Table>
         )}
+      </section>
+      <section>
+        <DataVis 
+        playerName={null}
+        playerData={playerData.data}
+        selectedAtts={selected.map((att) => att.value)}
+        />
       </section>
     </div>
   );
