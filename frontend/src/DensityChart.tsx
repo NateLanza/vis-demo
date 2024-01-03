@@ -27,7 +27,9 @@ const X_SCALE_FACTOR = 1.2;
 type DensityChartProps = {
   width: number;
   height: number;
+  color: string;
   data: number[];
+  highlight?: number;
 };
 
 /**
@@ -35,9 +37,10 @@ type DensityChartProps = {
  * @param width Width of the chart in px
  * @param height Height of the chart in px
  * @param data Data to display as an array of numbers
+ * @param highlight Optional value to highlight on the chart with a vertical line
  * @returns 
  */
-export const DensityChart = ({ width, height, data }: DensityChartProps) => {
+export const DensityChart = ({ width, height, color, data, highlight }: DensityChartProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
@@ -81,12 +84,23 @@ export const DensityChart = ({ width, height, data }: DensityChartProps) => {
       >
       <path
         d={path || undefined}
-        fill="#f00"
-        opacity={0.6}
+        fill={color}
+        opacity={0.3}
         stroke="black"
         strokeWidth={2}
         strokeLinejoin="round"
       />
+      {/* Highlight line */}
+      {highlight && (
+        <line
+          x1={xScale(highlight)}
+          x2={xScale(highlight)}
+          y1={0}
+          y2={boundsHeight}
+          stroke={color}
+          strokeWidth={2}
+        />
+      )}
         {/* X axis, use an additional translation to appear at the bottom */}
         <g transform={`translate(0, ${boundsHeight})`}>
           <AxisBottom xScale={xScale} pixelsPerTick={40} />
