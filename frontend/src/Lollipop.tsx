@@ -13,10 +13,9 @@
 
 import { useMemo } from "react";
 import * as d3 from "d3";
+import * as C from "./Constants";
 
 const MARGIN = { top: 30, right: 30, bottom: 30, left: 100 };
-
-const FONT_SIZE = 14;
 
 /**
  * A single category on the lollipop plot
@@ -73,7 +72,7 @@ export const Lollipop = ({ width, height, color, selectedColor, data, selected}:
           x2={xScale(d.value)}
           opacity={0.7}
           stroke={currColor}
-          strokeWidth={1}
+          strokeWidth={C.LINE_THICK}
         />
         <circle
           cy={y}
@@ -82,14 +81,14 @@ export const Lollipop = ({ width, height, color, selectedColor, data, selected}:
           stroke={currColor}
           fill={currColor}
           strokeWidth={1}
-          r={3}
+          r={C.CIRCLE_RADIUS}
         />
         <text
           x={xScale(0) - 7}
           y={y}
           textAnchor="end"
           alignmentBaseline="central"
-          fontSize={FONT_SIZE}
+          fontSize={C.FONT_SIZE}
         >
           {d.name}
         </text>
@@ -107,16 +106,17 @@ export const Lollipop = ({ width, height, color, selectedColor, data, selected}:
           x2={xScale(value)}
           y1={0}
           y2={boundsHeight}
-          stroke="#808080"
+          stroke={C.AXIS_COLOR}
           opacity={0.2}
+          strokeWidth={C.LINE_THICK}
         />
         <text
           x={xScale(value)}
-          y={boundsHeight + 10}
+          y={boundsHeight}
           textAnchor="middle"
           alignmentBaseline="central"
-          fontSize={9}
-          stroke="#808080"
+          fontSize={C.FONT_SIZE}
+          stroke={C.AXIS_COLOR}
           opacity={0.8}
         >
           {value}

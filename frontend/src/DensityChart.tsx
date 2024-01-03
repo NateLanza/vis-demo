@@ -16,6 +16,7 @@
 import { useMemo } from "react";
 import * as d3 from "d3";
 import { ScaleLinear } from "d3";
+import * as C from "./Constants";
 
 // Plot margin
 const MARGIN = { top: 30, right: 30, bottom: 50, left: 60 };
@@ -106,7 +107,7 @@ export const DensityChart = ({ width, height, color, selectedColor, data, highli
           y1={0}
           y2={boundsHeight}
           stroke={selectedColor}
-          strokeWidth={2}
+          strokeWidth={C.LINE_THICK}
         />
       )}
         {/* X axis, use an additional translation to appear at the bottom */}
@@ -174,7 +175,7 @@ const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
           <text
             key={value}
             style={{
-              fontSize: "10px",
+              fontSize: C.FONT_SIZE,
               textAnchor: "middle",
               transform: "translateY(20px)",
             }}

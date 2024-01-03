@@ -19,6 +19,10 @@
     * Color of selected table rows
     */
   --selected-color: #0073e6;
+  /*
+    * Color of hovered table rows
+    */
+  --hover-color: #00a3f6;
 }
 
 body {
@@ -56,8 +60,17 @@ table {
   border-spacing: 0;
 }
 
+tr:hover {
+  cursor: pointer;
+  background-color: var(--hover-color);
+}
+
 tr, tbody, thead, table {
   width: 100%;
+}
+
+th {
+  padding: 1px 4px;
 }
 
 td {
@@ -68,6 +81,7 @@ td {
 
 tr.selected {
   background-color: var(--selected-color);
+  color: white;
 }
 
 th:hover {
