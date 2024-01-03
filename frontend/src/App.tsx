@@ -19,6 +19,12 @@ const DEFAULT_ATTS: string[] =
 const DEFAULT_SORTBY: string = "Name";
 
 /**
+ * Width of the visualization column in px
+ * Also needs to be updated in App.css
+ */
+const VIS_WIDTH: number = 400;
+
+/**
  * Result of fetching data from the backend
  * 
  * @property data - Data fetched from backend; never[] while loading
@@ -116,7 +122,7 @@ function App() {
   // Render
   return (
     <div className="App">
-      <section>
+      <section className='half'>
         <h1>Soccer Player Data</h1>
         {!attsFetch.loaded ? (
           <h4>Loading attributes...</h4>
@@ -157,6 +163,7 @@ function App() {
         playerName={null}
         playerData={playerData.loaded ? playerData.data : null}
         selectedAtts={selected.map((att) => att.value)}
+        width={VIS_WIDTH}
         />
       </section>
     </div>

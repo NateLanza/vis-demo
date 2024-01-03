@@ -23,11 +23,6 @@ const CATEGORICAL_ATTS: Array<String> = ["Nationality", "National_Position",
 const NO_VIS_ATTS: string[] = ["Name", "Birth_Date"]
 
 /**
- * Width of the visualization in px
- */
-const VIS_WIDTH: number = 500;
-
-/**
  * Height of the visualization in px
  */
 const VIS_HEIGHT: number = 300;
@@ -90,6 +85,7 @@ export const DataVis = (props: {
   playerName: string | null,
   playerData: any[] | null,
   selectedAtts: string[],
+  width: number,
 }) => {
   if (!props.playerData) {
     return <></>;
@@ -104,11 +100,11 @@ export const DataVis = (props: {
       } else {
         return (
           <>
-            <h5>{att}</h5>
+            <h4>{att.replace("_", " ")}</h4>
             {!CATEGORICAL_ATTS.includes(att) ? (
               // Numerical att, use density chart
               <DensityChart
-                width={VIS_WIDTH}
+                width={props.width}
                 height={VIS_HEIGHT}
                 color="#9d174d"
                 data={getAttData(props.playerData!, att)}
@@ -121,7 +117,7 @@ export const DataVis = (props: {
             ) : (
               // String att, use lollipop chart
               <Lollipop
-                width={VIS_WIDTH}
+                width={props.width}
                 height={VIS_HEIGHT}
                 data={getCatData(props.playerData!, att)}
               />
