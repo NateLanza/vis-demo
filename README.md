@@ -33,6 +33,7 @@ I'm hoping to have more time to improve this project, as I really enjoyed writin
 - Dark mode!
 - Make sure density visualizations don't go below the minimum possible value (0)
 - Check for and uninstall unused NPM dependencies
+- Ensure all functions/constants are documented
 - Add `IPlayer` interface so that TS can typecheck Player objects
 - Abstract table code from `App.tsx` to its own file
 - Move ALL constants to `Constants.tsx`
