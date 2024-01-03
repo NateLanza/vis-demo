@@ -155,7 +155,7 @@ function App() {
       <section>
         <DataVis 
         playerName={null}
-        playerData={playerData.data}
+        playerData={playerData.loaded ? playerData.data : null}
         selectedAtts={selected.map((att) => att.value)}
         />
       </section>

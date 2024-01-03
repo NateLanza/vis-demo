@@ -16,6 +16,8 @@ import * as d3 from "d3";
 
 const MARGIN = { top: 30, right: 30, bottom: 30, left: 100 };
 
+const FONT_SIZE = 14;
+
 /**
  * A single category on the lollipop plot
  * @property name Name of the category
@@ -81,7 +83,7 @@ export const Lollipop = ({ width, height, data }: LollipopProps) => {
           y={y}
           textAnchor="end"
           alignmentBaseline="central"
-          fontSize={12}
+          fontSize={FONT_SIZE}
         >
           {d.name}
         </text>
