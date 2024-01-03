@@ -119,7 +119,8 @@ function App() {
     });
   }
 
-  const selectedPlayer = "Lionel Messi"
+  // Enable highlighting a single player
+  const [selectedPlayerName, setSelectedPlayerName] = useState("");
 
   // Render
   return (
@@ -145,13 +146,18 @@ function App() {
             <thead>
               <tr>
                 {selected.map((att) => (
-                    <th onClick={() => onClickSort(att.value)}>{att.label.replace("_", " ")}</th>
+                    <th onClick={() => onClickSort(att.value)}>
+                      {att.label.replace("_", " ")}
+                    </th>
                 ))}
               </tr>
             </thead>
           <tbody>
             {playerData.data.map((player: any) => (
-              <tr>
+              <tr 
+                onClick={() => (setSelectedPlayerName(player["Name"]))}
+                className={player["Name"] === selectedPlayerName ? "selected" : ""}
+              >
                 {selected.map((att) => (
                   <td>{player[att.label]}</td>
                 ))}
@@ -163,7 +169,7 @@ function App() {
       </section>
       <section className="right-half">
         <DataVis 
-        playerName={selectedPlayer}
+        playerName={selectedPlayerName}
         playerData={playerData.loaded ? playerData.data : null}
         selectedAtts={selected.map((att) => att.value)}
         width={VIS_WIDTH}

@@ -30,12 +30,12 @@ const VIS_HEIGHT: number = 400;
 /**
  * Color of the visualization
  */
-const VIS_COLOR: string = "#9d174d";
+const VIS_COLOR: string = "#e6308a";
 
 /**
  * Color of selected part of visualization
  */
-const VIS_SELECTED_COLOR: string = "#4d179d";
+const VIS_SELECTED_COLOR: string = "#0073e6";
 
 /**
  * Gets a list of all values for a specific attribute in the player data.

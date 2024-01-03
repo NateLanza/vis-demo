@@ -15,6 +15,10 @@
    * screen, which they do without padding
    */
   --section-height: calc(100% - 20px);
+  /*
+    * Color of selected table rows
+    */
+  --selected-color: #0073e6;
 }
 
 body {
@@ -46,6 +50,24 @@ section.right-half {
   width: var(--vis-width);
   height: calc(var(--section-height) - var(--header-height));
   max-height: 100%;
+}
+
+table {
+  border-spacing: 0;
+}
+
+tr, tbody, thead, table {
+  width: 100%;
+}
+
+td {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+tr.selected {
+  background-color: var(--selected-color);
 }
 
 th:hover {
