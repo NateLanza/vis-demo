@@ -18,6 +18,8 @@ const MARGIN = { top: 30, right: 30, bottom: 30, left: 100 };
 
 /**
  * A single category on the lollipop plot
+ * @property name Name of the category
+ * @property value Count of items in the category
  */
 export type LolliPoint = {
   name: string;
