@@ -8,6 +8,7 @@
  * Changes include:
  *  - Adding type annotations
  *  - Scaling the x axis to the data
+ *    - Requires scaling the domain by a factor
  * @author Yan Holtz
  * @see https://www.react-graph-gallery.com/density-plot
  */
@@ -16,30 +17,12 @@ import { useMemo } from "react";
 import * as d3 from "d3";
 import { ScaleLinear } from "d3";
 
+// Plot margin
 const MARGIN = { top: 30, right: 30, bottom: 50, left: 50 };
+// Length of ticks on the x axis
 const TICK_LENGTH = 6;
-
-// Function to compute density
-function kernelDensityEstimator(kernel: (x: number) => number, X: number[]): 
-    (V: number[]) => [number, number][] 
-{
-  return function (V: number[]): [number, number][] {
-    return X.map(function (x): [number, number] {
-      return [
-        x,
-        d3.mean(V, function (v: number) {
-          return kernel(x - v);
-        }) || 0, // Add a default value of 0 for undefined values
-      ];
-    });
-  };
-}
-
-function kernelEpanechnikov(k: number) {
-  return function (v: number) {
-    return Math.abs((v /= k)) <= 1 ? (0.75 * (1 - v * v)) / k : 0;
-  };
-}
+// Scale factor for x axis above max value
+const X_SCALE_FACTOR = 1.2;
 
 type DensityChartProps = {
   width: number;
@@ -61,7 +44,11 @@ export const DensityChart = ({ width, height, data }: DensityChartProps) => {
   const xScale = useMemo(() => {
     return d3
       .scaleLinear()
-      .domain([0, 1000])
+      // Domain must be scaled because the final point on the SVG path
+      // draws a line to the first point- so the final point should be
+      // 0. This is done by scaling the domain by a factor of 1.2
+      // to get well above the max, where the est density should be 0
+      .domain([0, Math.max(...data) * X_SCALE_FACTOR])
       .range([10, boundsWidth - 10]);
   }, [data, width]);
 
@@ -92,15 +79,14 @@ export const DensityChart = ({ width, height, data }: DensityChartProps) => {
         height={boundsHeight}
         transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
       >
-        <path
-          d={path || undefined}
-          fill="#9a6fb0"
-          opacity={0.4}
-          stroke="black"
-          strokeWidth={1}
-          strokeLinejoin="round"
-        />
-
+      <path
+        d={path || undefined}
+        fill="#f00"
+        opacity={0.6}
+        stroke="black"
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
         {/* X axis, use an additional translation to appear at the bottom */}
         <g transform={`translate(0, ${boundsHeight})`}>
           <AxisBottom xScale={xScale} pixelsPerTick={40} />
@@ -110,12 +96,34 @@ export const DensityChart = ({ width, height, data }: DensityChartProps) => {
   );
 };
 
+// Function to compute density
+function kernelDensityEstimator(kernel: (x: number) => number, X: number[]): 
+    (V: number[]) => [number, number][] 
+{
+  return function (V: number[]): [number, number][] {
+    return X.map(function (x): [number, number] {
+      return [
+        x,
+        d3.mean(V, function (v: number) {
+          return kernel(x - v);
+        }) || 0, // Add a default value of 0 for undefined values
+      ];
+    });
+  };
+}
+
+function kernelEpanechnikov(k: number) {
+  return function (v: number) {
+    return Math.abs((v /= k)) <= 1 ? (0.75 * (1 - v * v)) / k : 0;
+  };
+}
+
 type AxisBottomProps = {
   xScale: ScaleLinear<number, number>;
   pixelsPerTick: number;
 };
 
-export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
+const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
   const range = xScale.range();
 
   const ticks = useMemo(() => {
