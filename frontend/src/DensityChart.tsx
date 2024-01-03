@@ -28,6 +28,7 @@ type DensityChartProps = {
   width: number;
   height: number;
   color: string;
+  selectedColor: string;
   data: number[];
   highlight?: number;
 };
@@ -40,7 +41,7 @@ type DensityChartProps = {
  * @param highlight Optional value to highlight on the chart with a vertical line
  * @returns 
  */
-export const DensityChart = ({ width, height, color, data, highlight }: DensityChartProps) => {
+export const DensityChart = ({ width, height, color, selectedColor, data, highlight }: DensityChartProps) => {
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
@@ -104,7 +105,7 @@ export const DensityChart = ({ width, height, color, data, highlight }: DensityC
           x2={xScale(highlight)}
           y1={0}
           y2={boundsHeight}
-          stroke={color}
+          stroke={selectedColor}
           strokeWidth={2}
         />
       )}

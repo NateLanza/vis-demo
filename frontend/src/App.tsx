@@ -119,6 +119,8 @@ function App() {
     });
   }
 
+  const selectedPlayer = "Lionel Messi"
+
   // Render
   return (
     <div className="App">
@@ -161,7 +163,7 @@ function App() {
       </section>
       <section className="right-half">
         <DataVis 
-        playerName={null}
+        playerName={selectedPlayer}
         playerData={playerData.loaded ? playerData.data : null}
         selectedAtts={selected.map((att) => att.value)}
         width={VIS_WIDTH}

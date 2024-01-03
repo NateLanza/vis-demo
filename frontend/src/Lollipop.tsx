@@ -31,10 +31,13 @@ export type LolliPoint = {
 type LollipopProps = {
   width: number;
   height: number;
+  color: string;
+  selectedColor: string;
   data: LolliPoint[];
+  selected?: string; // Category to select
 };
 
-export const Lollipop = ({ width, height, data }: LollipopProps) => {
+export const Lollipop = ({ width, height, color, selectedColor, data, selected}: LollipopProps) => {
   // bounds = area inside the graph axis = calculated by substracting the margins
   const boundsWidth = width - MARGIN.right - MARGIN.left;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
@@ -58,6 +61,9 @@ export const Lollipop = ({ width, height, data }: LollipopProps) => {
   const allShapes = data.map((d, i) => {
     const y = (yScale(d.name) as number) + yScale.bandwidth() / 2;
 
+    const currColor: string = selected && 
+      selected === d.name ? selectedColor : color;
+
     return (
       <g key={i}>
         <line
@@ -66,15 +72,15 @@ export const Lollipop = ({ width, height, data }: LollipopProps) => {
           y2={y}
           x2={xScale(d.value)}
           opacity={0.7}
-          stroke="#9d174d"
+          stroke={currColor}
           strokeWidth={1}
         />
         <circle
           cy={y}
           cx={xScale(d.value)}
           opacity={0.7}
-          stroke="#9d174d"
-          fill="#9d174d"
+          stroke={currColor}
+          fill={currColor}
           strokeWidth={1}
           r={3}
         />

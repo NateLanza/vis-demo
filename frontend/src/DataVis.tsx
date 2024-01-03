@@ -28,6 +28,16 @@ const NO_VIS_ATTS: string[] = ["Name", "Birth_Date", "Club_Joining"]
 const VIS_HEIGHT: number = 400;
 
 /**
+ * Color of the visualization
+ */
+const VIS_COLOR: string = "#9d174d";
+
+/**
+ * Color of selected part of visualization
+ */
+const VIS_SELECTED_COLOR: string = "#4d179d";
+
+/**
  * Gets a list of all values for a specific attribute in the player data.
  * Should only be called on numerical attributes or atts in CONVERTABLE_ATTS, 
  * or return type may be wrong.
@@ -40,7 +50,7 @@ function getAttData(playerData: any[], att: string): number[] {
   return playerData.map((player) => {
     if (CONVERTABLE_ATTS.includes(att)) {
       // Conversion string to number only works for height and weight
-      return Number((player[att] as string).split(" ")[0]);
+      return convertAtt(player[att]);
     } else {
       return player[att] as number;
     }
@@ -72,6 +82,29 @@ function getCatData(playerData: any[], att: string): LolliPoint[] {
   });
   return Object.entries(counts).map(([name, value]) => ({ name, value }));
 }
+
+/**
+ * Converts a string attribute to a number
+ * @param value String value to convert. Should be the value of an att
+ * in CONVERTABLE_ATTS
+ * @returns Number value
+ */
+function convertAtt(value: string): number {
+  return Number(value.split(" ")[0]);
+}
+
+/**
+ * Gets a specific attribute for a specific player
+ * @param playerData Player data
+ * @param playerName Name of player to get attribute for
+ * @param att Attribute to get
+ * @returns Value of attribute for player
+ */
+function getPlayerAtt(playerData: any[], playerName: string, att: string): any {
+  const value = playerData.find((player) => player.Name === playerName)[att];
+  return CONVERTABLE_ATTS.includes(att) ? convertAtt(value) : value;
+}
+
 
 
 /**
@@ -106,11 +139,11 @@ export const DataVis = (props: {
               <DensityChart
                 width={props.width}
                 height={VIS_HEIGHT}
-                color="#9d174d"
+                color={VIS_COLOR}
+                selectedColor={VIS_SELECTED_COLOR}
                 data={getAttData(props.playerData!, att)}
                 highlight={props.playerName ? 
-                  Number(props.playerData!.find(
-                    (player) => player.Name === props.playerName)[att]) 
+                  Number(getPlayerAtt(props.playerData!, props.playerName, att)) 
                   : undefined
                 }
               />
@@ -119,7 +152,13 @@ export const DataVis = (props: {
               <Lollipop
                 width={props.width}
                 height={VIS_HEIGHT}
+                color={VIS_COLOR}
+                selectedColor={VIS_SELECTED_COLOR}
                 data={getCatData(props.playerData!, att)}
+                selected={props.playerName ?
+                  getPlayerAtt(props.playerData!, props.playerName, att)
+                  : undefined
+                }
               />
             )}
           </>

@@ -10,12 +10,11 @@
    */
   --header-height: 105px;
   /*
-   * Height of the two main sections as a percentage.
-   * The header height is subtracted from this for the final calc.
-   * However, this still needs to be set a little lower than 100% or we lose
-   * a row off the bottom for reasons I don't feel like looking into
+   * Height of the two main sections.
+   * We add some padding on the bottom so that rows don't go off-
+   * screen, which they do without padding
    */
-  --section-height: 96%;
+  --section-height: calc(100% - 20px);
 }
 
 body {
