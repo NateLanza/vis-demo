@@ -1,3 +1,54 @@
+:root {
+  /* 
+   * Width of right side visualization panel.
+   * This must be updated in conjunction with the const in App.tsx,
+   * but should generally be greater to show the whole visualization.
+  */
+  --vis-width: 500px;
+  /*
+   * Header height
+   */
+  --header-height: 105px;
+  /*
+   * Height of the two main sections as a percentage.
+   * The header height is subtracted from this for the final calc.
+   * However, this still needs to be set a little lower than 100% or we lose
+   * a row off the bottom for reasons I don't feel like looking into
+   */
+  --section-height: 96%;
+}
+
+body {
+  overflow: hidden;
+}
+
+header {
+  height: var(--header-height);
+  width: 100%;
+}
+
+section {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  overflow: auto;
+  position: absolute;
+}
+
+section.left-half {
+  width: calc(100% - var(--vis-width));
+  height: calc(var(--section-height) - var(--header-height));
+  overflow: auto;
+  left: 0
+}
+
+section.right-half {
+  right: 0;
+  width: var(--vis-width);
+  height: calc(var(--section-height) - var(--header-height));
+  max-height: 100%;
+}
+
 th:hover {
   cursor: pointer;
 }

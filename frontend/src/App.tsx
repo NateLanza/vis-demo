@@ -22,7 +22,7 @@ const DEFAULT_SORTBY: string = "Name";
  * Width of the visualization column in px
  * Also needs to be updated in App.css
  */
-const VIS_WIDTH: number = 400;
+const VIS_WIDTH: number = 450;
 
 /**
  * Result of fetching data from the backend
@@ -122,8 +122,8 @@ function App() {
   // Render
   return (
     <div className="App">
-      <section className='half'>
-        <h1>Soccer Player Data</h1>
+      <header>
+      <h1>Soccer Player Data</h1>
         {!attsFetch.loaded ? (
           <h4>Loading attributes...</h4>
         ) : (
@@ -134,7 +134,8 @@ function App() {
           onChange={handleMultiSelectChange}
           />
         )}
-        <br />
+      </header>
+      <section className="left-half">
         {!playerData.loaded ? (
           <h4>Loading player data...</h4>
         ) : (
@@ -142,7 +143,7 @@ function App() {
             <thead>
               <tr>
                 {selected.map((att) => (
-                    <th onClick={() => onClickSort(att.value)}>{att.label}</th>
+                    <th onClick={() => onClickSort(att.value)}>{att.label.replace("_", " ")}</th>
                 ))}
               </tr>
             </thead>
@@ -158,7 +159,7 @@ function App() {
         </Table>
         )}
       </section>
-      <section>
+      <section className="right-half">
         <DataVis 
         playerName={null}
         playerData={playerData.loaded ? playerData.data : null}

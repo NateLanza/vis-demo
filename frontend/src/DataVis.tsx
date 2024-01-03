@@ -20,12 +20,12 @@ const CATEGORICAL_ATTS: Array<String> = ["Nationality", "National_Position",
 /**'
  * Atts that don't make sense to visualize with PDs or Lollipops
  */
-const NO_VIS_ATTS: string[] = ["Name", "Birth_Date"]
+const NO_VIS_ATTS: string[] = ["Name", "Birth_Date", "Club_Joining"]
 
 /**
  * Height of the visualization in px
  */
-const VIS_HEIGHT: number = 300;
+const VIS_HEIGHT: number = 400;
 
 /**
  * Gets a list of all values for a specific attribute in the player data.
@@ -92,7 +92,7 @@ export const DataVis = (props: {
   }
 
   return (
-    <section>
+    <div>
     {props.selectedAtts.map((att: string) => {
       // Convert atts and select a vis
       if (NO_VIS_ATTS.includes(att)) {
@@ -126,6 +126,6 @@ export const DataVis = (props: {
         );
       }
     })}
-  </section>
+  </div>
   )
 };

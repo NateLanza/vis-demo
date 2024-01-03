@@ -18,11 +18,11 @@ import * as d3 from "d3";
 import { ScaleLinear } from "d3";
 
 // Plot margin
-const MARGIN = { top: 30, right: 30, bottom: 50, left: 50 };
+const MARGIN = { top: 30, right: 30, bottom: 50, left: 60 };
 // Length of ticks on the x axis
 const TICK_LENGTH = 6;
-// Scale factor for x axis above max value
-const X_SCALE_FACTOR = 1.2;
+// X axis padding below min and above max
+const X_PADDING = 15;
 
 type DensityChartProps = {
   width: number;
@@ -51,14 +51,21 @@ export const DensityChart = ({ width, height, color, data, highlight }: DensityC
       // draws a line to the first point- so the final point should be
       // 0. This is done by scaling the domain by a factor of 1.2
       // to get well above the max, where the est density should be 0
-      .domain([0, Math.max(...data) * X_SCALE_FACTOR])
+      .domain([Math.min(...data) - X_PADDING, Math.max(...data) + X_PADDING])
       .range([10, boundsWidth - 10]);
   }, [data, width]);
 
   // Compute kernel density estimation
-  const density = useMemo(() => {
+  const density: [number, number][] = useMemo(() => {
     const kde = kernelDensityEstimator(kernelEpanechnikov(7), xScale.ticks(40));
-    return kde(data);
+    const densityCalc = kde(data);
+    const lastPoint = densityCalc[densityCalc.length - 1];
+    // Add a point at y=0 to the start and end to make the path close right 
+    return [
+      [0, 0], 
+      ...densityCalc, 
+      [lastPoint ? lastPoint[0] : 0, 0]
+    ];
   }, [xScale]);
 
   const yScale = useMemo(() => {
